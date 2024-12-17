@@ -6,7 +6,6 @@ struct MainView: View {
     @StateObject private var locationManager = LocationManager()
     @State private var isCameraActive: Bool = false
     @State private var viewModel = FetchWeatherDataViewModel()
-    @State private var weatherData: OpenWeatherAPIResponse?
 
     var body: some View {
         NavigationView {
@@ -23,15 +22,14 @@ struct MainView: View {
                 // Sun and Quality
                 VStack(spacing: 8) {
                     ZStack {
-
-                        Image("Image")
+                        Image("Sun")
                             .frame(width: 180.0, height: 180.0)
                             .offset(x: 0, y: -20)
 
                         HStack {
-                            Text("70")
+                            Text("\(viewModel.weatherData?.clouds.all ?? 0)" )
                                 .font(.system(size: 130, weight: .bold))
-                                .foregroundColor(.clear)  // Make the text transparent
+                                .foregroundColor(.clear)
                                 .overlay(
                                     LinearGradient(
                                         gradient: Gradient(colors: [
@@ -43,7 +41,7 @@ struct MainView: View {
                                     )
                                 )
                                 .mask(
-                                    Text("70")
+                                    Text("0")
                                         .font(.system(size: 130, weight: .bold))
                                         .fontWeight(.bold)
                                         .multilineTextAlignment(.trailing)
@@ -73,7 +71,7 @@ struct MainView: View {
                         }
                     }
 
-                    Text("Good Quality")
+                    Text("Cloud Coverage")
                         .font(.system(size: 18, weight: .regular))
                         .foregroundColor(.black)
                         .offset(x: 0, y: 25)
@@ -83,7 +81,7 @@ struct MainView: View {
 
                 // Sunset and Date
                 VStack(spacing: 16) {
-                    Text("Sunset at 16:35 PM")
+                    Text("Sunset at " + (viewModel.readableSunsetTime ?? "00:00"))
                         .font(.title2)
                         .fontWeight(.medium)
                         .foregroundColor(Color.accentColor2)
@@ -186,14 +184,11 @@ struct MainView: View {
             .edgesIgnoringSafeArea(.all)
         }
         .task {
-            do {
-                weatherData = try await viewModel.fetchWeatherData()
-            } catch {
-                print("Something went wrong")
-            }
-            print("SUNRISE: \(weatherData?.sun.sunrise)")
+            await viewModel.fetchWeatherData()
         }
     }
+    
+    
 }
 
 struct NavigationBar: View {

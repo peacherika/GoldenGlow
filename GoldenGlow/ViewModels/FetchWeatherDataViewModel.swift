@@ -8,9 +8,26 @@ import Foundation
 
 @Observable
 class FetchWeatherDataViewModel {
-    var apiDatas: [OpenWeatherAPIResponse] = []
-    var endpp = ""
-    var items: [Sun] = []
+    var weatherData: OpenWeatherAPIResponse?
+
+    var readableSunsetTime: String? {
+        guard let sunsetTimestamp = weatherData?.sun.sunset,
+            let timezoneOffset = weatherData?.timezone
+        else {
+            return nil
+        }
+
+        // Convert the sunset time to Date
+        let sunsetDate = Date(
+            timeIntervalSince1970: TimeInterval(sunsetTimestamp))
+
+        // Format the Date to a readable string using the timezone offset
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeStyle = .short
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: timezoneOffset)
+
+        return dateFormatter.string(from: sunsetDate)
+    }
 
     private var apiKey: String {
         if let filePath = Bundle.main.path(
@@ -33,40 +50,9 @@ class FetchWeatherDataViewModel {
         return URLSession(configuration: sessionConfiguration)
     }
 
-    private var locationManager = LocationManager()
-
-    func fetchDatas(endp: String) {
-        let endpoint =
-            "https://api.openweathermap.org/data/2.5/weather?q=\(String(describing: locationManager.currentLocation))&appid="
-
-        if let url = URL(string: endpoint) {
-            let session = URLSession(configuration: .default)
-            let task = session.dataTask(with: url) { datas, response, err in
-                if err != nil {
-                    print(err!.localizedDescription)
-                }
-                let Decoder = JSONDecoder()
-                if let safeData = datas {
-                    do {
-                        let jsonData = try Decoder.decode(
-                            OpenWeatherAPIResponse.self, from: safeData)
-                        DispatchQueue.main.async {
-                            self.apiDatas = [jsonData]
-                            print(jsonData.name)
-                            print(self.locationManager.currentCity)
-                        }
-                    } catch let err as NSError {
-                        print(err.localizedDescription)
-                    }
-                }
-            }
-            task.resume()
-        }
-    }
-
-    func fetchWeatherData() async -> OpenWeatherAPIResponse? {
+    func fetchWeatherData() async {
         let currentCity = "naples"
-        
+
         var urlComponents = URLComponents()
         urlComponents.scheme = "https"
         urlComponents.host = "api.openweathermap.org"
@@ -79,7 +65,7 @@ class FetchWeatherDataViewModel {
         ]
 
         guard let url = urlComponents.url else {
-            return nil
+            return
         }
 
         let request = URLRequest(url: url)
@@ -93,18 +79,17 @@ class FetchWeatherDataViewModel {
                     httpResponse.statusCode == 404
                 {
                     print("Something went wrong")
-                    return nil
+                    return
                 }
                 print("Something went wrong")
-                return nil
+                return
 
             }
 
-            return try JSONDecoder().decode(OpenWeatherAPIResponse.self, from: data)
+            weatherData = try JSONDecoder().decode(
+                OpenWeatherAPIResponse.self, from: data)
         } catch {
             print("Something went wrong")
         }
-        
-        return nil
     }
 }
