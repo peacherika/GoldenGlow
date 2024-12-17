@@ -6,11 +6,11 @@
 //
 import Foundation
 
-@MainActor
-class ApiManagementVm: ObservableObject {
-    @Published var apiDatas: [Weather] = []
+@Observable
+class FetchWeatherDataViewModel {
+    var apiDatas: [Weather] = []
     var endpp = ""
-    @Published var items: [Sun] = []
+    var items: [Sun] = []
 
     private var locationManager = LocationManager()
     init() {

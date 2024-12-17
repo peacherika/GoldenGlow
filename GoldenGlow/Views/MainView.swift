@@ -3,10 +3,10 @@ import Combine
 import CoreLocation
 import SwiftUI
 
-struct SunsetQualityView: View {
+struct MainView: View {
     @StateObject private var locationManager = LocationManager()
     @State private var isCameraActive: Bool = false
-    @StateObject private var test = ApiManagementVm()
+    @State private var viewModel = FetchWeatherDataViewModel()
 
     var body: some View {
         NavigationView {
@@ -329,5 +329,5 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
 }
 
 #Preview {
-    SunsetQualityView()
+    MainView()
 }
