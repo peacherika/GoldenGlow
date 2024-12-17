@@ -5,8 +5,8 @@
 //  Created by Erika Piccirillo on 15/12/24.
 //
 
-import SwiftUI
 import AVFoundation
+import SwiftUI
 
 struct CameraView: View {
     @Environment(\.dismiss) var dismiss
@@ -17,8 +17,8 @@ struct CameraView: View {
             Color.accentColor4.opacity(0.6).edgesIgnoringSafeArea(.all)
 
             VStack {
-                Spacer() // Spazio sopra la fotocamera
-                
+                Spacer()  // Spazio sopra la fotocamera
+
                 if isCountdownActive() {
                     Text(countdownText)
                         .font(.title)
@@ -31,11 +31,11 @@ struct CameraView: View {
                 }
 
                 CameraPreview()
-                    .frame(width: 395, height: 550) // Dimensioni personalizzate
+                    .frame(width: 395, height: 550)  // Dimensioni personalizzate
                     .cornerRadius(20)
                     .padding(.top, 30)
 
-                Spacer() // Spazio sotto la fotocamera
+                Spacer()  // Spazio sotto la fotocamera
 
                 Button(action: {
                     print("Scatta una foto")
@@ -82,12 +82,19 @@ struct CameraView: View {
         let now = Date()
         let calendar = Calendar.current
         let currentSeconds = calendar.component(.second, from: now)
-        let remainingSeconds = (44 - calendar.component(.minute, from: now)) * 60 + (59 - currentSeconds)
+        let remainingSeconds =
+            (44 - calendar.component(.minute, from: now)) * 60
+            + (59 - currentSeconds)
 
         Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-            if remainingSeconds - Int(timer.fireDate.timeIntervalSince(now)) >= 0 {
-                let timeLeft = remainingSeconds - Int(timer.fireDate.timeIntervalSince(now))
-                countdownText = String(format: "%02d:%02d", timeLeft / 60, timeLeft % 60)
+            if remainingSeconds - Int(timer.fireDate.timeIntervalSince(now))
+                >= 0
+            {
+                let timeLeft =
+                    remainingSeconds
+                    - Int(timer.fireDate.timeIntervalSince(now))
+                countdownText = String(
+                    format: "%02d:%02d", timeLeft / 60, timeLeft % 60)
             } else {
                 timer.invalidate()
                 countdownText = ""
@@ -126,7 +133,10 @@ struct CameraPreview: UIViewRepresentable {
     func updateUIView(_ uiView: CameraPreviewView, context: Context) {}
 
     private func configureSession() {
-        guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
+        guard
+            let camera = AVCaptureDevice.default(
+                .builtInWideAngleCamera, for: .video, position: .back)
+        else {
             print("Fotocamera non disponibile.")
             return
         }
@@ -147,8 +157,6 @@ struct CameraPreview: UIViewRepresentable {
     }
 }
 
-
-
 #Preview {
-    
+
 }

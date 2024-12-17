@@ -1,7 +1,7 @@
-import SwiftUI
 import AVFoundation
-import CoreLocation
 import Combine
+import CoreLocation
+import SwiftUI
 
 struct SunsetQualityView: View {
     @StateObject private var locationManager = LocationManager()
@@ -23,7 +23,7 @@ struct SunsetQualityView: View {
                 // Sun and Quality
                 VStack(spacing: 8) {
                     ZStack {
-                        
+
                         Image("Image")
                             .frame(width: 180.0, height: 180.0)
                             .offset(x: 0, y: -20)
@@ -31,10 +31,13 @@ struct SunsetQualityView: View {
                         HStack {
                             Text("70")
                                 .font(.system(size: 130, weight: .bold))
-                                .foregroundColor(.clear) // Make the text transparent
+                                .foregroundColor(.clear)  // Make the text transparent
                                 .overlay(
                                     LinearGradient(
-                                        gradient: Gradient(colors: [Color.accentColor3, Color.accentColor3, Color.black]),
+                                        gradient: Gradient(colors: [
+                                            Color.accentColor3,
+                                            Color.accentColor3, Color.black,
+                                        ]),
                                         startPoint: .top,
                                         endPoint: .init(x: 0.55, y: 0.85)
                                     )
@@ -50,11 +53,13 @@ struct SunsetQualityView: View {
 
                             Text("%")
                                 .font(.system(size: 30, weight: .bold))
-                                .foregroundColor(.clear) // Transparent text
+                                .foregroundColor(.clear)  // Transparent text
                                 .multilineTextAlignment(.trailing)
                                 .overlay(
                                     LinearGradient(
-                                        gradient: Gradient(colors: [Color.accentColor3, Color.black]),
+                                        gradient: Gradient(colors: [
+                                            Color.accentColor3, Color.black,
+                                        ]),
                                         startPoint: .top,
                                         endPoint: .bottom
                                     )
@@ -74,8 +79,6 @@ struct SunsetQualityView: View {
                         .offset(x: 0, y: 25)
                 }
 
-                
-                
                 Spacer()
 
                 // Sunset and Date
@@ -109,7 +112,7 @@ struct SunsetQualityView: View {
                     // Time Periods
                     VStack(spacing: 4) {
                         HStack {
-                            Text("7:58") //Cosa voglio metttere qua?
+                            Text("7:58")  //Cosa voglio metttere qua?
                                 .multilineTextAlignment(.leading)
                             Spacer()
                             Text("Golden")
@@ -120,12 +123,13 @@ struct SunsetQualityView: View {
                         }
 
                         HStack {
-                            Text("7:30") //sunrise
+                            Text("7:30")  //sunrise
                                 .multilineTextAlignment(.leading)
                             Spacer()
-                            Image(systemName: "sunrise.fill");Image(systemName: "sunset.fill")
+                            Image(systemName: "sunrise.fill")
+                            Image(systemName: "sunset.fill")
                             Spacer()
-                            Text("18:30") //sunset
+                            Text("18:30")  //sunset
                                 .multilineTextAlignment(.trailing)
                         }
                         HStack {
@@ -159,8 +163,8 @@ struct SunsetQualityView: View {
                                 .multilineTextAlignment(.trailing)
                         }
                     }.foregroundColor(Color.accentColor)
-                    .padding(.horizontal, 20)
-                    .font(.system(size: 15))
+                        .padding(.horizontal, 20)
+                        .font(.system(size: 15))
                 }
 
                 .padding(.vertical, 30)
@@ -169,16 +173,20 @@ struct SunsetQualityView: View {
                 // Bottom Navigation Bar
                 NavigationBar(isCameraActive: $isCameraActive)
             }
-                       .frame(maxWidth: .infinity, maxHeight: .infinity)
-                       .background(LinearGradient(
-                           gradient: Gradient(colors: [Color.pink.opacity(0.4), Color.accentColor4]),
-                           startPoint: .top,
-                           endPoint: .bottom
-                       ))
-                       .edgesIgnoringSafeArea(.all)
-                   }
-               }
-           }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color.pink.opacity(0.4), Color.accentColor4,
+                    ]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
+            .edgesIgnoringSafeArea(.all)
+        }
+    }
+}
 
 struct NavigationBar: View {
     @Binding var isCameraActive: Bool
@@ -202,11 +210,11 @@ struct NavigationBar: View {
 
             // Camera Button
             Button(action: {
-                isCameraActive = true // Attiva la navigazione verso la fotocamera
+                isCameraActive = true  // Attiva la navigazione verso la fotocamera
             }) {
                 ZStack {
                     Circle()
-                        .fill(Color.pink.opacity(0.2)) // Sfondo rosa
+                        .fill(Color.pink.opacity(0.2))  // Sfondo rosa
                         .frame(width: 60, height: 60)
                     Image(systemName: "camera.fill")
                         .resizable()
@@ -216,7 +224,7 @@ struct NavigationBar: View {
                 }
             }
             .fullScreenCover(isPresented: $isCameraActive) {
-                CameraView() // Vista della fotocamera a schermo intero
+                CameraView()  // Vista della fotocamera a schermo intero
             }
 
             Spacer()
@@ -277,7 +285,9 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         }
     }
 
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    func locationManager(
+        _ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]
+    ) {
         print("Location updated: \(locations)")
         guard let location = locations.last else {
             print("No valid location found")
@@ -287,20 +297,24 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         fetchCityName(from: location)
     }
 
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+    func locationManager(
+        _ manager: CLLocationManager, didFailWithError error: Error
+    ) {
         print("Failed to find location: \(error)")
     }
 
     private func fetchCityName(from location: CLLocation) {
         let geocoder = CLGeocoder()
-        geocoder.reverseGeocodeLocation(location) { [weak self] placemarks, error in
+        geocoder.reverseGeocodeLocation(location) {
+            [weak self] placemarks, error in
             if let error = error {
                 print("Reverse geocoding failed with error: \(error)")
                 return
             }
-            
+
             guard let placemark = placemarks?.first else {
-                print("No placemarks found for location: \(location.coordinate)")
+                print(
+                    "No placemarks found for location: \(location.coordinate)")
                 return
             }
 
@@ -310,11 +324,10 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
                 self?.currentCity = city
             }
         }
-        
-        
+
     }
-    }
+}
 
 #Preview {
-    
+    SunsetQualityView()
 }
