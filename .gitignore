@@ -42,4 +42,7 @@ Temporary Items
 ## User settings
 xcuserdata/
 
+# Open Weather API Secret
+OpenWeatherSecret.plist
+
 # End of https://www.toptal.com/developers/gitignore/api/xcode,swift,macos

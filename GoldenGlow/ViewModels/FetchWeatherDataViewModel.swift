@@ -16,13 +16,13 @@ class FetchWeatherDataViewModel {
     init() {
         fetchDatas(
             endp:
-                "https://api.openweathermap.org/data/2.5/weather?q=\(String(describing: locationManager.currentLocation))&appid=4e828e100c642aec139ad21633e4d43d"
+                "https://api.openweathermap.org/data/2.5/weather?q=\(String(describing: locationManager.currentLocation))&appid="
         )
     }
 
     func fetchDatas(endp: String) {
         let endpoint =
-            "https://api.openweathermap.org/data/2.5/weather?q=\(String(describing: locationManager.currentLocation))&appid=4e828e100c642aec139ad21633e4d43d"
+            "https://api.openweathermap.org/data/2.5/weather?q=\(String(describing: locationManager.currentLocation))&appid="
 
         if let url = URL(string: endpoint) {
             let session = URLSession(configuration: .default)
