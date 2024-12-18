@@ -27,7 +27,7 @@ struct MainView: View {
                             .offset(x: 0, y: -20)
 
                         HStack {
-                            Text("\(viewModel.weatherData?.clouds.all ?? 0)" )
+                            Text("\(viewModel.weatherData?.clouds.all ?? 20)" )
                                 .font(.system(size: 130, weight: .bold))
                                 .foregroundColor(.clear)
                                 .overlay(
@@ -41,7 +41,7 @@ struct MainView: View {
                                     )
                                 )
                                 .mask(
-                                    Text("0")
+                                    Text("\(viewModel.weatherData?.clouds.all ?? 20)")
                                         .font(.system(size: 130, weight: .bold))
                                         .fontWeight(.bold)
                                         .multilineTextAlignment(.trailing)

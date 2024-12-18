@@ -277,6 +277,7 @@
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "We need your location to provide current Weather information.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to provide current Weather information.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Richiediamo accesso alla tua libreria.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need permission the access your library.";
 				INFOPLIST_KEY_NSUserTrackingUsageDescription = "Questo permette all'app di inviarti notifiche utili relative ai tuoi contenuti preferiti.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -316,6 +317,7 @@
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "We need your location to provide current Weather information.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "We need your location to provide current Weather information.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Richiediamo accesso alla tua libreria.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We need permission the access your library.";
 				INFOPLIST_KEY_NSUserTrackingUsageDescription = "Questo permette all'app di inviarti notifiche utili relative ai tuoi contenuti preferiti.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

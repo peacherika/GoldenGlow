@@ -6,11 +6,13 @@
 //
 
 import AVFoundation
+import Photos
 import SwiftUI
 
 struct CameraView: View {
     @Environment(\.dismiss) var dismiss
     @State private var countdownText: String = ""
+    @StateObject private var cameraController = CameraController()
 
     var body: some View {
         ZStack {
@@ -30,7 +32,7 @@ struct CameraView: View {
                         }
                 }
 
-                CameraPreview()
+                CameraPreview(session: cameraController.session)
                     .frame(width: 395, height: 550)  // Dimensioni personalizzate
                     .cornerRadius(20)
                     .padding(.top, 30)
@@ -38,7 +40,7 @@ struct CameraView: View {
                 Spacer()  // Spazio sotto la fotocamera
 
                 Button(action: {
-                    print("Scatta una foto")
+                    cameraController.takePhoto()
                 }) {
                     Circle()
                         .frame(width: 70, height: 70)
@@ -67,6 +69,12 @@ struct CameraView: View {
 
                 Spacer()
             }
+        }
+        .onAppear {
+            cameraController.startSession()
+        }
+        .onDisappear {
+            cameraController.stopSession()
         }
     }
 
@@ -104,39 +112,54 @@ struct CameraView: View {
 }
 
 struct CameraPreview: UIViewRepresentable {
-    class CameraPreviewView: UIView {
-        var previewLayer: AVCaptureVideoPreviewLayer {
-            guard let layer = self.layer as? AVCaptureVideoPreviewLayer else {
-                fatalError("Layer non è di tipo AVCaptureVideoPreviewLayer.")
+    let session: AVCaptureSession
+
+    class VideoPreviewView: UIView {
+            override class var layerClass: AnyClass {
+                return AVCaptureVideoPreviewLayer.self
             }
-            return layer
+
+            var videoPreviewLayer: AVCaptureVideoPreviewLayer {
+                return layer as! AVCaptureVideoPreviewLayer
+            }
         }
 
-        override class var layerClass: AnyClass {
-            AVCaptureVideoPreviewLayer.self
+        func makeUIView(context: Context) -> VideoPreviewView {
+            let view = VideoPreviewView()
+            view.videoPreviewLayer.session = session
+            view.videoPreviewLayer.videoGravity = .resizeAspectFill
+            return view
+        }
+
+        func updateUIView(_ uiView: VideoPreviewView, context: Context) {
+            uiView.videoPreviewLayer.connection?.videoOrientation = .portrait
+            uiView.videoPreviewLayer.frame = uiView.bounds
         }
     }
 
+class CameraController: ObservableObject {
     let session = AVCaptureSession()
+    private let output = AVCapturePhotoOutput()
+    private let photoCaptureDelegate = CameraPhotoCapture()
 
-    func makeUIView(context: Context) -> CameraPreviewView {
-        let view = CameraPreviewView()
-        view.previewLayer.session = session
-        view.previewLayer.videoGravity = .resizeAspectFill
-
+    init() {
         configureSession()
-        session.startRunning()
-
-        return view
     }
 
-    func updateUIView(_ uiView: CameraPreviewView, context: Context) {}
+    func startSession() {
+        DispatchQueue.global(qos: .background).async {
+            self.session.startRunning()
+        }
+    }
+
+    func stopSession() {
+        DispatchQueue.global(qos: .background).async {
+            self.session.stopRunning()
+        }
+    }
 
     private func configureSession() {
-        guard
-            let camera = AVCaptureDevice.default(
-                .builtInWideAngleCamera, for: .video, position: .back)
-        else {
+        guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
             print("Fotocamera non disponibile.")
             return
         }
@@ -146,8 +169,6 @@ struct CameraPreview: UIViewRepresentable {
             if session.canAddInput(input) {
                 session.addInput(input)
             }
-
-            let output = AVCapturePhotoOutput()
             if session.canAddOutput(output) {
                 session.addOutput(output)
             }
@@ -155,7 +176,38 @@ struct CameraPreview: UIViewRepresentable {
             print("Errore nella configurazione della fotocamera: \(error)")
         }
     }
+
+    func takePhoto() {
+        let settings = AVCapturePhotoSettings()
+        output.capturePhoto(with: settings, delegate: photoCaptureDelegate)
+    }
 }
+
+class CameraPhotoCapture: NSObject, AVCapturePhotoCaptureDelegate {
+    func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+        guard let imageData = photo.fileDataRepresentation() else { return }
+
+        // Salva l'immagine nel rullino fotografico
+        PHPhotoLibrary.requestAuthorization { status in
+            if status == .authorized {
+                PHPhotoLibrary.shared().performChanges({
+                    let options = PHAssetResourceCreationOptions()
+                    let creationRequest = PHAssetCreationRequest.forAsset()
+                    creationRequest.addResource(with: .photo, data: imageData, options: options)
+                }) { success, error in
+                    if success {
+                        print("Foto salvata con successo!")
+                    } else {
+                        print("Errore nel salvataggio della foto: \(error?.localizedDescription ?? "Errore sconosciuto")")
+                    }
+                }
+            } else {
+                print("Autorizzazione alla libreria fotografica negata.")
+            }
+        }
+    }
+}
+
 
 #Preview {
 
