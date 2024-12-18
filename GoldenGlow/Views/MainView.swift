@@ -27,7 +27,7 @@ struct MainView: View {
                             .offset(x: 0, y: -20)
 
                         HStack {
-                            Text("\(viewModel.weatherData?.clouds.all ?? 20)" )
+                            Text("\(viewModel.weatherData?.clouds.all ?? 0)" )
                                 .font(.system(size: 130, weight: .bold))
                                 .foregroundColor(.clear)
                                 .overlay(
@@ -41,7 +41,7 @@ struct MainView: View {
                                     )
                                 )
                                 .mask(
-                                    Text("\(viewModel.weatherData?.clouds.all ?? 20)")
+                                    Text("\(viewModel.weatherData?.clouds.all ?? 0)")
                                         .font(.system(size: 130, weight: .bold))
                                         .fontWeight(.bold)
                                         .multilineTextAlignment(.trailing)
@@ -110,54 +110,54 @@ struct MainView: View {
                     // Time Periods
                     VStack(spacing: 4) {
                         HStack {
-                            Text("7:58")  //Cosa voglio metttere qua?
+                            Text("8:04")  //Cosa voglio metttere qua?
                                 .multilineTextAlignment(.leading)
                             Spacer()
                             Text("Golden")
                                 .multilineTextAlignment(.center)
                             Spacer()
-                            Text("15:51")
+                            Text("15:52")
                                 .multilineTextAlignment(.trailing)
                         }
 
                         HStack {
-                            Text("7:30")  //sunrise
+                            Text("7:20")  //sunrise
                                 .multilineTextAlignment(.leading)
                             Spacer()
                             Image(systemName: "sunrise.fill")
                             Image(systemName: "sunset.fill")
                             Spacer()
-                            Text("18:30")  //sunset
+                            Text("16:36")  //sunset
                                 .multilineTextAlignment(.trailing)
                         }
                         HStack {
-                            Text("6:44")
+                            Text("6:50")
                                 .multilineTextAlignment(.leading)
                             Spacer()
                             Text("Civil")
                                 .multilineTextAlignment(.center)
                             Spacer()
-                            Text("17:05")
+                            Text("17:07")
                                 .multilineTextAlignment(.trailing)
                         }
                         HStack {
-                            Text("6:10")
+                            Text("6:15")
                                 .multilineTextAlignment(.leading)
                             Spacer()
                             Text("Naut.")
                                 .multilineTextAlignment(.center)
                             Spacer()
-                            Text("17:40")
+                            Text("17:41")
                                 .multilineTextAlignment(.trailing)
                         }
                         HStack {
-                            Text("5:36")
+                            Text("5:42")
                                 .multilineTextAlignment(.leading)
                             Spacer()
                             Text("Astro")
                                 .multilineTextAlignment(.center)
                             Spacer()
-                            Text("18:13")
+                            Text("18:15")
                                 .multilineTextAlignment(.trailing)
                         }
                     }.foregroundColor(Color.accentColor)

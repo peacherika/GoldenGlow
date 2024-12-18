@@ -1,5 +1,5 @@
 import Foundation
-import NotificationCenter
+import UserNotifications
 
 class NotificationManager {
 
@@ -8,7 +8,7 @@ class NotificationManager {
         "It's Golden hour!"
     ]
 
-    func requestPermission() {
+    private func requestPermission() {
         UNUserNotificationCenter.current().requestAuthorization(options: [
             .alert, .sound, .badge,
         ]) { granted, error in
@@ -21,46 +21,39 @@ class NotificationManager {
             }
         }
     }
-
-    func scheduleDailyNotifications() {
-        let times = [
-            (hour: 11, minute: 56)
-        ]
-
-        for (index, time) in times.enumerated() {
-            let sentence =
-                notificationSentences.randomElement() ?? "Stay positive!"
-            scheduleNotification(
-                atHour: time.hour, minute: time.minute, title: "Daily Reminder",
-                body: sentence, identifier: "notification-\(index)")
-        }
-    }
-
-    private func scheduleNotification(
-        atHour hour: Int, minute: Int, title: String, body: String,
-        identifier: String
-    ) {
-        let content = UNMutableNotificationContent()
-        content.title = title
-        content.body = body
-        content.sound = .default
-
+    
+    // Schedule the notification for a specific date and with a custom sound
+    private func scheduleNotification(atHour hour: Int, minute: Int) {
         var dateComponents = DateComponents()
-        dateComponents.hour = hour
-        dateComponents.minute = minute
+        dateComponents.hour = 12
+        dateComponents.minute = 12
+        
+        let content = UNMutableNotificationContent()
+        // Sets up notification information
+        content.title = "GoldenGlow"
+        content.body = "It's golden hour"
+        content.userInfo = ["deepLink": "throwalarm://alarm"] // Deep link for the minigame
+        // Get component from Date in order to schedule for a specific time
+        // Create the trigger based on date components
 
-        let trigger = UNCalendarNotificationTrigger(
-            dateMatching: dateComponents, repeats: true)
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
 
-        let request = UNNotificationRequest(
-            identifier: identifier, content: content, trigger: trigger)
-
+        // Create a unique request
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+        // Adds request to notification center
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
-                print(
-                    "Error scheduling notification: \(error.localizedDescription)"
-                )
+                print("Error while scheduling notification: \(error.localizedDescription)")
+            } else {
+                print("Notification successfully scheduled")
             }
         }
     }
+
+    func sendNotification(atHour hour: Int, minute: Int){
+        requestPermission()
+        scheduleNotification(atHour: hour, minute: minute)
+    }
+    
 }
+

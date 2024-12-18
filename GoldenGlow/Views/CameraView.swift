@@ -19,7 +19,7 @@ struct CameraView: View {
             Color.accentColor4.opacity(0.6).edgesIgnoringSafeArea(.all)
 
             VStack {
-                Spacer()  // Spazio sopra la fotocamera
+                Spacer()
 
                 if isCountdownActive() {
                     Text(countdownText)
@@ -52,6 +52,8 @@ struct CameraView: View {
 
             VStack {
                 HStack {
+                    
+                    
                     Button(action: {
                         dismiss()
                     }) {
@@ -83,7 +85,7 @@ struct CameraView: View {
         let calendar = Calendar.current
         let hour = calendar.component(.hour, from: now)
         let minute = calendar.component(.minute, from: now)
-        return hour == 16 && minute >= 35 && minute < 45
+        return hour == 16 && minute >= 27 && minute < 37
     }
 
     private func startCountdown() {
@@ -91,7 +93,7 @@ struct CameraView: View {
         let calendar = Calendar.current
         let currentSeconds = calendar.component(.second, from: now)
         let remainingSeconds =
-            (44 - calendar.component(.minute, from: now)) * 60
+            (36 - calendar.component(.minute, from: now)) * 60
             + (59 - currentSeconds)
 
         Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
